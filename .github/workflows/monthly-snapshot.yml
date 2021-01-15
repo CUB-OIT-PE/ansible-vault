@@ -1,0 +1,29 @@
+name: Release Monthly Snapshot
+
+on:
+  schedule:
+  - cron: "*/15 * * * *"
+
+jobs:
+  build:
+    name: Release Monthly Snapshot
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get current date
+        id: date
+        run: echo "DATE=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+      - name: Checkout master Branch
+        uses: actions/checkout@v2
+        with:
+          ref: 'master'
+      - name: Create Release
+        id: monthly-snapshot
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.DATE }}
+          release_name: "Monthly snapshot for ${{ env.DATE }}"
+          draft: false
+          prerelease: false
+
